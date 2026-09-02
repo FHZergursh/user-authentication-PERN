@@ -2,6 +2,7 @@ import express from "express"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 import { sql } from "../config/db.js"
+import { protect } from "../middleware/auth.js"
 
 const router = express.Router()
 
@@ -21,9 +22,9 @@ const generateToken = (id) => {
 //register 
 
 router.post('/register', async (req, res) => {
-  const {username, email, password} = req.body
+  const {name, email, password} = req.body
 
-  if (!username || !email || !password) {
+  if (!name || !email || !password) {
     return res.status(400).json({message: 'Please provide all required fields'})
   }
 
@@ -36,8 +37,8 @@ router.post('/register', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await sql.query(`
-    INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, name, email`, 
-  [username, email, hashedPassword])
+    INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING id, name, email`, 
+  [name, email, hashedPassword])
 
 
   const token = generateToken(newUser.rows[0].id);
@@ -74,11 +75,11 @@ router.post('/login', async (req, res) => {
 
   res.cookie('token', token, cookieOptions)
 
-  res.json({user : {id: userData.id, username: userData.username, email: userData.email}})
+  res.json({user : {id: userData.id, name: userData.name, email: userData.email}})
 
 })
 
-router.get('/me', async (req, res) => {
+router.get('/me', protect, async (req, res) => {
   res.json(req.user)
   //from protect middleware
 })
