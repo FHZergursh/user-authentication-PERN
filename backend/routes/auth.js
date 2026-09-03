@@ -30,7 +30,9 @@ router.post('/register', async (req, res) => {
 
   const userExists = await sql.query(`SELECT * FROM users WHERE email = $1`, [email])
 
-  if (userExists.rows.length > 0) {
+  const len = userExists.length
+
+  if (len > 0) {
     return res.status(400).json({message: "User already exists"})
   }
 
@@ -41,11 +43,11 @@ router.post('/register', async (req, res) => {
   [name, email, hashedPassword])
 
 
-  const token = generateToken(newUser.rows[0].id);
+  const token = generateToken(newUser[0].id);
 
   res.cookie('token', token, cookieOptions)
 
-  return res.status(201).json({user: newUser.rows[0] })
+  return res.status(201).json({user: newUser[0]})
 
 })
 
@@ -57,12 +59,13 @@ router.post('/login', async (req, res) => {
 
   const user = await sql.query("SELECT * FROM users WHERE email = $1", [email])
 
-  if (user.rows.length === 0)
+  const len = user.length
+  if (len === 0)
   {
     return res.status(400).json({message: 'User not found'})
   }
 
-  const userData = user.rows[0]
+  const userData = user[0]
 
   const isMatch = await bcrypt.compare(password, userData.password);
 
