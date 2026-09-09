@@ -10,7 +10,7 @@ import type { User } from './types/user';
 axios.defaults.withCredentials = true
 
 const App = () => {
-  const [user, setUser] = useState<User>({username: "Guest", email: "", password: "", });
+  const [user, setUser] = useState<User>({username: "Guest", email: "", password: "", }); //didn't like the possibility of an undefined user
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const App = () => {
       }
       catch (error) 
       {
-        console.log(error)
+        console.log(error) 
 
       }
       finally {

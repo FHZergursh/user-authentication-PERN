@@ -21,6 +21,7 @@ const Login = (props : LoginProps) => {
       console.log("submit")
       const res = await axios.post("http://localhost:5000/api/auth/login", form);
       console.log(res)
+      props.set(res.data) //setUser from app.tsxs
       navigate('/')
       
 
@@ -32,12 +33,13 @@ const Login = (props : LoginProps) => {
 
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <h2>Login</h2>
-        <input type='email' placeholder='email' className='border p-w w-full mb-3' 
+    <div className='min-h-screen flex items-center justify-center'>
+      <form className='bg-white p-6 rounded shadow-md'  onSubmit={handleSubmit}>
+        <h2 className='text-xl mb-4'>Login</h2>
+        {error && <p className='text-red-500 mb-4'>{error}</p>}
+        <input type='email' placeholder='email' className='border p-w w-full mb-3 pl-2' 
         value={form.email} onChange={(e) => setForm({...form, email: e.target.value})} />
-        <input type='password' placeholder='password' className='border p-w w-full mb-3' 
+        <input type='password' placeholder='password' className='border p-w w-full mb-3 pl-2' 
         value={form.password} onChange={(e) => setForm({...form, password: e.target.value})} />
         <button className='bg-blue-500 text-white p-2 w-full' type='submit'>Login</button>
       </form>
