@@ -5,11 +5,12 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import axios from 'axios';
+import type { User } from './types/user';
 
 axios.defaults.withCredentials = true
 
 const App = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>({username: "Guest", email: "", password: "", });
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -21,7 +22,6 @@ const App = () => {
       catch (error) 
       {
         console.log(error)
-        setUser(null)
 
       }
       finally {
@@ -40,7 +40,7 @@ const App = () => {
     <Navbar />
     <Routes>
       <Route path='/' element={<Home />} />
-      <Route path='/login' element={<Login />} />
+      <Route path='/login' element={<Login set={setUser}/>} />
       <Route path='/register' element={<Register />} />
     </Routes>
     </BrowserRouter>
